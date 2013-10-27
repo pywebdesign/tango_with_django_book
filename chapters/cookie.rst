@@ -99,7 +99,7 @@ If the message isn't displayed, you'll want to check your browser's security set
 
 Client Side Cookies: A Site Counter Example
 -------------------------------------------
-Now we know cookies work let's implement a very simple site visit counter. To achieve this, we're going to be creating two cookies. One to track the number of times the user has visited the Rango website, and the other to track the last time he or she accessed the site. Keeping track of the date and time of the last access will allow us to only increment the site counter once per day, for example.
+Now we know cookies work so let's implement a very simple site visit counter. To achieve this, we're going to be creating two cookies. One to track the number of times the user has visited the Rango website, and the other to track the last time he or she accessed the site. Keeping track of the date and time of the last access will allow us to only increment the site counter once per day, for example.
 
 The sensible place to assume a user enters the Rango site is at the index page. Open ``rango/index.py`` and edit the ``index()`` view as follows:
 
@@ -125,7 +125,10 @@ The sensible place to assume a user enters the Rango site is at the index page. 
 	    # We use the COOKIES.get() function to obtain the visits cookie.
 	    # If the cookie exists, the value returned is casted to an integer.
 	    # If the cookie doesn't exist, we default to zero and cast that.
-	    visits = int(request.COOKIES.get('visits', '0'))
+	    if request.COOKIES.has_key('visits'):
+	        visits = int(request.COOKIES.get('visits', '0'))
+	    else:
+	        response.set_cookie('visits', 1)
 	
 	    # Does the cookie last_visit exist?
 	    if request.COOKIES.has_key('last_visit'):
@@ -143,6 +146,7 @@ The sensible place to assume a user enters the Rango site is at the index page. 
 	    else:
 	        # Cookie last_visit doesn't exist, so create it to the current date/time.
 	        response.set_cookie('last_visit', datetime.now())
+	        
 	
 	    # Return response back to the user, updating any cookies that need changed.
 	    return response
